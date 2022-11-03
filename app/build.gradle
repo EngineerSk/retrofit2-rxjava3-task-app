@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.oriadesoftdev.retrofitrxjava3'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.oriadesoftdev.retrofitrxjava3"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug{
+            buildConfigField("String","BASE_URL","\"https://freeapi.rdewan.dev/\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    // Material Dialog Dependency
+    // https://github.com/afollestad/material-dialogs
+    implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
+
+    // Retrofit & Gson Converter Dependency
+    // https://square.github.io/retrofit/
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    // Gson Dependency
+    implementation "com.google.code.gson:gson:$gson_version"
+
+    // OkHttp3 & OkHttp3 logging interceptor Dependencies
+    // https://github.com/square/okhttp
+    // define a BOM and its version
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttp3_bom_version"))
+    implementation "com.squareup.okhttp3:okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor"
+
+    // RxJava3 Dependency
+    // https://github.com/ReactiveX/RxJava
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava3_version"
+    // Retrofit RxJava3 Adapter Dependency
+    // https://github.com/square/retrofit/tree/master/retrofit-adapters/rxjava3
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$adapter_rxjava3_version"
+
+    // RxAndroid Dependency for RxJava3
+    // https://github.com/ReactiveX/RxAndroid
+    implementation "io.reactivex.rxjava3:rxandroid:$rxjava3_rxandroid_version"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
