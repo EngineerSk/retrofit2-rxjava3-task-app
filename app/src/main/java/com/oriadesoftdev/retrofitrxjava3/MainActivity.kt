@@ -1,11 +1,16 @@
 package com.oriadesoftdev.retrofitrxjava3
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,10 +23,15 @@ import com.google.android.material.textfield.TextInputEditText
 import com.oriadesoftdev.retrofitrxjava3.data.response.TaskResponse
 import com.oriadesoftdev.retrofitrxjava3.ui.TaskViewModel
 import com.oriadesoftdev.retrofitrxjava3.ui.adapter.TaskRecyclerViewAdapter
+import com.oriadesoftdev.retrofitrxjava3.util.RxSearchView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var mSearchView: SearchView
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mListAdapter: TaskRecyclerViewAdapter
@@ -79,6 +89,53 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
+
+    private fun initSearchView() {
+        taskViewModel.isLoadingLiveData.value = true
+        RxSearchView.rxSearch(mSearchView)
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .filter {
+                return@filter !it.isNullOrEmpty()
+            }
+            .distinctUntilChanged()
+            .switchMapSingle { query ->
+                taskViewModel.searchTask(query)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ tasks ->
+                Log.d(TAG, "searchTask: $tasks")
+                taskViewModel.apply {
+                    isLoadingLiveData.value = false
+                    isSuccessLiveData.value = true
+                    taskListLiveData.value = tasks
+                }
+            }) {
+                Log.e(TAG, "searchTask: ${it.message}")
+                taskViewModel.apply {
+                    isLoadingLiveData.value = false
+                    isSuccessLiveData.value = false
+                    errorLiveData.value = it.message
+                }
+            }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        menu?.findItem(R.id.action_search)?.let {
+            mSearchView = (it.actionView as SearchView)
+        }
+        initSearchView()
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_filter_off -> taskViewModel.getAllTasks()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     private fun addTask() {
         MaterialDialog(this)

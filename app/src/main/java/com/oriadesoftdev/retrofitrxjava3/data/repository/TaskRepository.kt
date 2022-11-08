@@ -8,6 +8,7 @@ class TaskRepository(private val networkService: NetworkService) {
 
     fun getAllTasks() = networkService.getAllTasks()
     fun addTask(taskRequest: TaskRequest) = networkService.addTask(taskRequest)
+    fun searchTask(query: String) = networkService.searchTask(query)
     fun updateTask(taskRequest: TaskRequest) = networkService.updateTask(taskRequest)
     fun deleteTask(taskRequest: DeleteRequest) = networkService.deleteTask(taskRequest)
 }

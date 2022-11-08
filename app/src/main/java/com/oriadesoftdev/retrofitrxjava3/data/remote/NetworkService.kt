@@ -23,4 +23,8 @@ interface NetworkService {
     @Headers(Endpoint.HEADER_ACCEPT)
     @POST(Endpoint.DELETE_TASK)
     fun deleteTask(@Body taskRequest: DeleteRequest): Single<TaskResponse.TaskResponseItem>
+
+    @Headers(Endpoint.HEADER_ACCEPT)
+    @GET("${Endpoint.SEARCH_TASK}{query}")
+    fun searchTask(@Path("query") query: String): Single<TaskResponse>
 }

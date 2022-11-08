@@ -10,6 +10,7 @@ import com.oriadesoftdev.retrofitrxjava3.data.request.DeleteRequest
 import com.oriadesoftdev.retrofitrxjava3.data.request.TaskRequest
 import com.oriadesoftdev.retrofitrxjava3.data.response.TaskResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -39,7 +40,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         getAllTasks()
     }
 
-    private fun getAllTasks() {
+    fun getAllTasks() {
         isLoadingLiveData.value = true
         compositeDisposable.add(
             taskRepository.getAllTasks()
@@ -94,6 +95,10 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         status = taskStatusLiveData.value.toString()
     )
 
+    fun searchTask(query: String): Single<TaskResponse> {
+        return taskRepository.searchTask(query)
+    }
+
     fun editTask() {
         isLoadingLiveData.value = true
         compositeDisposable.add(
@@ -136,4 +141,9 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         id = taskIdLiveData.value?.toLong() ?: 0L,
         userId = taskUserIdLiveData.value?.toInt() ?: 0
     )
+
+    override fun onCleared() {
+        compositeDisposable.clear()
+        super.onCleared()
+    }
 }
