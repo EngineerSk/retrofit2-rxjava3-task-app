@@ -3,6 +3,7 @@ package com.oriadesoftdev.retrofitrxjava3.data.remote
 import com.oriadesoftdev.retrofitrxjava3.data.request.DeleteRequest
 import com.oriadesoftdev.retrofitrxjava3.data.request.TaskRequest
 import com.oriadesoftdev.retrofitrxjava3.data.response.TaskResponse
+import com.oriadesoftdev.retrofitrxjava3.data.response.TaskResponsePaging
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.*
 
@@ -27,4 +28,8 @@ interface NetworkService {
     @Headers(Endpoint.HEADER_ACCEPT)
     @GET("${Endpoint.SEARCH_TASK}{query}")
     fun searchTask(@Path("query") query: String): Single<TaskResponse>
+
+    @Headers(Endpoint.HEADER_ACCEPT)
+    @GET(Endpoint.GET_ALL_TASK_PAGING)
+    fun getAllTaskPaging(@Query("page") pageNumber:Int): Single<TaskResponsePaging>
 }
